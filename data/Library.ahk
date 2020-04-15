@@ -843,7 +843,7 @@
             Gui, Inventory: Add, Checkbox, vEnableMQQForMagicMap x335 y190 Checked%EnableMQQForMagicMap%, Enable to Magic Maps?
 
         Gui, Inventory: Tab, Item Crafting Settings
-          Global ItemCraftingClass
+          Global ItemCraftingClass,ItemCraftingInfluence,ItemCraftingILvL
           classList := []
           uniqueList := ""
           For k, v in Bases
@@ -861,13 +861,23 @@
           }
           }
           uniqueList := ArrayToString(RmvDuplic(classList))
+          influenceList = None|Crusader|Warlord|Redeemer|Hunter|Elder|Shaper
           Gui, Inventory: Font, Bold s9 cBlack, Arial
           Gui, Inventory: Add, Text,       Section              x12   ym+25,         Item Crafting (Beta)
-          Gui, Inventory: Add,GroupBox,Section w200 h65 xs, Item Class:
+          Gui, Inventory: Add,GroupBox,Section w200 h300 xs, Item Settings:
           Gui, Inventory: Font,
           Gui, Inventory: Font, s8
           Gui, Inventory: Add, DropDownList, xs+5   ys+30    w150    vItemCraftingClass  Choose%ItemCraftingClass%,  %uniqueList%
           GuiControl,Inventory: ChooseString, ItemCraftingClass, %ItemCraftingClass%
+          Gui, Inventory: Add, DropDownList,  y+30    w150    vItemCraftingInfluence  Choose%ItemCraftingInfluence%,  %influenceList%
+          GuiControl,Inventory: ChooseString, ItemCraftingInfluence, %ItemCraftingInfluence%
+          Gui, Inventory: Add, Edit, number limit2 xs+15 y+15 w40
+          Gui, Inventory: Add, UpDown, Range1-100 x+0 yp hp vItemCraftingILvL , %ItemCraftingILvL%
+          Gui, Inventory: Add, Text,         x+10 yp+3        , Item ILvL
+          Gui, Inventory: Font, Bold s9 cBlack, Arial
+          Gui, Inventory: Add,GroupBox,Section w200 h300 x+200 ys, Item Affixes:
+          Gui, Inventory: Font,
+          Gui, Inventory: Font, s8
         }
         Gui, Inventory: show , w600 h500, Inventory Settings
       }

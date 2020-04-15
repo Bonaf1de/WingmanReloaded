@@ -124,7 +124,9 @@
       BlockInput, MouseMoveOff
       return
     }
-
+    ; ArrayToString - Convert ArrayList to String
+    ; -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   
     ArrayToString(Array)
     {
       for index, element in Array
@@ -140,10 +142,28 @@
       }
       return text
     }
+    ; StringToArray - Convert String to ArrayList
+    ; -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
     StringToArray(text)
     {
       Array := StrSplit(text,"|")
-      return array
+      return Array
+    }
+    ; Remove Duplicate Values from a list
+    ; -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    RmvDuplic(object) 
+    {
+      secondobject:=[]
+      Loop % object.Length()
+      {
+        value:=Object.RemoveAt(1) ; otherwise Object.Pop() a little faster, but would not keep the original order
+        Loop % secondobject.Length()
+          If (value=secondobject[A_Index])
+              Continue 2 ; jump to the top of the outer loop, we found a duplicate, discard it and move on
+        secondobject.Push(value)
+      }
+      Return secondobject
     }
   /*** Wingman GUI Handlers
 
@@ -327,7 +347,7 @@
           ; Gui, Inventory: Add, Button,      gloadSaved     x+5           h23,   Load
           Gui, Inventory: Add, Button,      gLaunchSite     x+5           h23,   Website
 
-          Gui, Inventory: Add, Tab2, vInventoryGuiTabs x3 y3 w625 h505 -wrap , Options|Stash Tabs|Stash Hotkeys|Map Crafting Settings
+          Gui, Inventory: Add, Tab2, vInventoryGuiTabs x3 y3 w625 h505 -wrap , Options|Stash Tabs|Stash Hotkeys|Map Crafting Settings|Item Crafting Settings
 
         Gui, Inventory: Tab, Options
           Gui, Inventory: Font, Bold s9 cBlack, Arial
@@ -821,6 +841,33 @@
           Gui, Inventory: Font,
             Gui, Inventory: Font,s8
             Gui, Inventory: Add, Checkbox, vEnableMQQForMagicMap x335 y190 Checked%EnableMQQForMagicMap%, Enable to Magic Maps?
+
+        Gui, Inventory: Tab, Item Crafting Settings
+          Global ItemCraftingClass
+          classList := []
+          uniqueList := ""
+          For k, v in Bases
+          {
+          If ( !IndexOf("talisman",v["tags"]) 
+          && ( IndexOf("amulet",v["tags"]) 
+          || IndexOf("ring",v["tags"]) 
+          || IndexOf("belt",v["tags"]) 
+          || IndexOf("armour",v["tags"]) 
+          || IndexOf("weapon",v["tags"])
+          || IndexOf("jewel",v["tags"])
+          || IndexOf("abyss_jewel",v["tags"]) ) )
+          {
+            classList.Push(v["item_class"])
+          }
+          }
+          uniqueList := ArrayToString(RmvDuplic(classList))
+          Gui, Inventory: Font, Bold s9 cBlack, Arial
+          Gui, Inventory: Add, Text,       Section              x12   ym+25,         Item Crafting (Beta)
+          Gui, Inventory: Add,GroupBox,Section w200 h65 xs, Item Class:
+          Gui, Inventory: Font,
+          Gui, Inventory: Font, s8
+          Gui, Inventory: Add, DropDownList, xs+5   ys+30    w150    vItemCraftingClass  Choose%ItemCraftingClass%,  %uniqueList%
+          GuiControl,Inventory: ChooseString, ItemCraftingClass, %ItemCraftingClass%
         }
         Gui, Inventory: show , w600 h500, Inventory Settings
       }
